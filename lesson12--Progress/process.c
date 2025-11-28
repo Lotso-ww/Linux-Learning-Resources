@@ -44,7 +44,7 @@ void Process_version(double total,double current,double speed,const char*userinf
     }
     // 3. 彩色打印进度条（分颜色区分不同部分，视觉更清晰）
     // printf("[%-100s][%5.1lf%%][%c] | %.1lf/%.1lf,speed: %.1lf%s\r", out_bar,rate,lable[index],current,total,speed,userinfo);
-    printf(COLOR_RED"[%-100s]",out_bar);    // 进度主体（绿色）
+    printf(COLOR_RED"[%-100s]",out_bar);    // 进度主体（红色）
     printf(COLOR_BLUE"[%5.1lf%%]",rate);    // 百分比（蓝色）
     printf(COLOR_CYAN"[%c]",lable[index]);  // 动态光标（青色）
     printf(COLOR_YELLOW"| %.1lf/%.1lf,speed: %.1lf%s\r",current,total,speed,userinfo);  // 附加信息（黄色）
