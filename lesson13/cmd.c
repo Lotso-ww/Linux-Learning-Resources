@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+int flag = 0; // 故意设置错误值
+
 int Sum(int s, int e) 
 {
     int result = 0;
@@ -8,7 +10,7 @@ int Sum(int s, int e)
     {
         result += i;
     }
-    return result;
+    return result * flag; // bug点: flag = 0 导致结果始终为 0 
 }
 
 int main() 
