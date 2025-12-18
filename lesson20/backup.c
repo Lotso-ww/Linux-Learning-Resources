@@ -6,6 +6,14 @@
 #include<sys/types.h>
 #include<sys/wait.h>
 
+int main()
+{
+  // int i = 0;
+  // for(; i < 255; i++)
+  //     printf("%d->%s\n", i, strerror(i));
+   printf("haha,I'm a process! pid: %d, ppid: %d\n", getpid(), getppid());
+   return 88;
+}
 
 //int main()
 //{
