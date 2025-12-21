@@ -34,12 +34,12 @@ int main()
        // execv("usr/bin/top", argv);
        // execl("usr/bin/ls", "ls", "-a", "-l",NULL);
        // execl("usr/bin/top", "top", "-d", "1", "-n", "3",NULL);
-       // execl("./myproc", "myproc", "-a", "-b", "-c", NULL);
+       execl("./myproc", "myproc", "-a", "-b", "-c", NULL);
        // execle("./myproc", "myproc", "-a", "-b", "-c", NULL, env);
-        extern char **environ;
-        putenv((char*)"haha=hehe");
-        putenv((char*)"class=118");
-        execle("./myproc", "myproc", "-a", "-b", "-c", NULL, environ); //我们没有传递环境变量！
+       // extern char **environ;
+       // putenv((char*)"haha=hehe");
+       // putenv((char*)"class=118");
+       // execle("./myproc", "myproc", "-a", "-b", "-c", NULL, environ); //我们没有传递环境变量！
         //execl("/usr/bin/bash", "bash", "shell.sh", NULL); //?????
         //execl("/usr/bin/python3", "python3", "test.py", NULL); //?????
         exit(1);
