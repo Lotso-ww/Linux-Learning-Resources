@@ -17,7 +17,34 @@ static const char* sep = " ";
 // 与退出码有关
 static int lastCode = 0;
 // 与环境变量相关,按道理来说是由bash来维护的,从系统配置文件读,但是我们这里直接从系统bash拷贝就行了
-static char* env[64];
+char** _environ;
+static int envc = 0;
+
+
+static void InitEnv()
+{
+    extern char** environ; // 系统环境变量数组（以NULL结尾）
+    for(envc = 0; environ[envc]; envc++)
+    {
+        _environ[envc] = environ[envc];
+    }
+}
+
+static void PrintAllEnv()
+{
+    int i = 0;
+    for( ; _environ[i]; i++ )
+    {
+        printf("%s\n", _environ[i]);
+    }
+}
+
+static void AddEnv(const char* val) // argv[1];
+{
+    _environ[envc] = (char*)malloc(strlen(val) + 1);
+    strcpy(_environ[envc], val);
+    _environ[++envc] = NULL; 
+}
 
 static void GetUserName()
 {
@@ -107,6 +134,19 @@ int CheckBuiltinAndExcute()
             }
         }
     }
+    else if(strcmp(argv[0], "env") == 0)
+    {
+        ret = 1;
+        PrintAllEnv();
+    }
+    else if(strcmp(argv[0], "export") == 0)
+    {
+        ret = 1;
+        if(argc == 2)
+        {
+            AddEnv(argv[1]);
+        }
+    }
 
     return ret;
 }
@@ -148,6 +188,13 @@ static void ParseCommandLine()
 
 void bash()
 {
+    // 环境变量相关,方便实现通过声明(_environ)就能直接用环境变量
+    static char* env[64];
+    _environ = env;
+    // 除此以外我们还可以通过一个数组存储本地变量
+    // 以及可以通过一个来存储别名…
+    // 初始化读取环境变量
+    InitEnv();
     while(1)
     {
         // 第一步: 输出提示命令行
