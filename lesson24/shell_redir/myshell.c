@@ -236,6 +236,12 @@ void Redir()
             if(*(start + 1) == '>')
             {
                 // 追加重定向
+                redir_type = AppRedir;
+                *start = 0;
+                start += 2;
+                CLEAR_LEFT_SPACE(start);
+                redir_filename = start;
+                break;
             }
             else{
                 // 输出重定向
@@ -246,7 +252,20 @@ void Redir()
                 redir_filename = start;
                 break;
             }
-            
+        }
+
+        else if(*start == '<') 
+        {
+            // 输入重定向
+            redir_type = InputRedir;
+            *start = '\0';
+            start++;
+            CLEAR_LEFT_SPACE(start);
+            redir_filename = start;
+            break;
+        }
+        else{
+            start++;
         }
     }
 }
@@ -261,6 +280,9 @@ void bash()
     InitEnv();
     while(1)
     {
+        // 每次开始前重置一下重定向文件和状态
+        redir_type = NoneRedir;
+        redir_filename = NULL;
         // 第一步: 输出提示命令行
         PrintPromt();
 
