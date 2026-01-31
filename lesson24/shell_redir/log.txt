@@ -1,0 +1,14 @@
+total 36
+-rw-rw-r-- 1 Lotso Lotso     0 Jan 31 13:28 log.txt
+-rw-rw-r-- 1 Lotso Lotso    63 Jan 30 11:59 main.c
+-rw-rw-r-- 1 Lotso Lotso    73 Jan 30 11:59 Makefile
+-rwxrwxr-x 1 Lotso Lotso 14552 Jan 31 13:28 mybash
+-rw-rw-r-- 1 Lotso Lotso  7093 Jan 31 13:28 myshell.c
+-rw-rw-r-- 1 Lotso Lotso    47 Jan 30 11:59 myshell.h
+total 40
+-rw-rw-r-- 1 Lotso Lotso   324 Jan 31 13:28 log.txt
+-rw-rw-r-- 1 Lotso Lotso    63 Jan 30 11:59 main.c
+-rw-rw-r-- 1 Lotso Lotso    73 Jan 30 11:59 Makefile
+-rwxrwxr-x 1 Lotso Lotso 14552 Jan 31 13:28 mybash
+-rw-rw-r-- 1 Lotso Lotso  7093 Jan 31 13:28 myshell.c
+-rw-rw-r-- 1 Lotso Lotso    47 Jan 30 11:59 myshell.h

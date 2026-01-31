@@ -176,19 +176,19 @@ void Excute()
         // 程序替换
         // 要不要重定向,怎么重定向
         // filename 
-        if(redir_type = InputRedir)
+        if(redir_type == InputRedir)
         {
             int fd = open(redir_filename, O_RDONLY);
             (void)fd;
             dup2(fd, 0);
         }
-        else if(redir_type = OutputRedir)
+        else if(redir_type == OutputRedir)
         {
             int fd = open(redir_filename, O_CREAT | O_WRONLY | O_TRUNC, 0666);
             (void)fd;
             dup2(fd, 1);
         }
-        else if(redir_type = AppRedir)
+        else if(redir_type == AppRedir)
         {
             int fd = open(redir_filename, O_CREAT | O_WRONLY | O_APPEND, 0666);
             (void)fd;
