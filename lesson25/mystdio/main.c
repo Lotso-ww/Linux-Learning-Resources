@@ -1,5 +1,7 @@
 #include "my_stdio.h"
 #include <string.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 int main()
 {
@@ -11,6 +13,8 @@ int main()
     while(cnt--)
     {
         Myfwrite(msg, 1, strlen(msg), fp);
+       //  Myfflush(fp); // 如果没有换行
+        sleep(2);
     }
 
     Myfclose(fp);

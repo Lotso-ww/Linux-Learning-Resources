@@ -39,6 +39,7 @@ My_FILE* Myfopen(const char* pathname, const char* mode) // r w a
     if(fd < 0) return NULL;
     // 创建 My_FILE对象
     My_FILE* fp = (My_FILE*)malloc(sizeof(My_FILE));
+    if(!fp) return NULL;
     fp->fileno = fd;
     fp->flags = flags;
     fp->fstrategy = FLUSH_LINE;
@@ -69,9 +70,9 @@ int Myfwrite(const char* message, int size, int num, My_FILE* fp)
 
     // C语言向文件写入实际上是向缓冲区写入
     int sizeNum = size * num;
-    if(fp->size + sizeNum > fp->cap - 1) // 预留\0的位置
+    if(fp->size + sizeNum < fp->cap - 1) // 预留\0的位置
     {
-        memcpy(fp->outbuffer + fp->size, message, num);
+        memcpy(fp->outbuffer + fp->size, message, sizeNum);
         fp->size += sizeNum;
         fp->outbuffer[fp->size] = 0;
     }
