@@ -5,11 +5,15 @@
 #include <sys/types.h>
 #include <fcntl.h>
 
+//int main()
+//{ 
+//    printf("hello world"); // 语言缓冲区 -> stdout->outbuffer
+//    sleep(40);
+//    return 0;
+//}
+//
 int main()
-{
-    //printf("hello world"); // 语言缓冲区 -> stdout->outbuffer
-    //sleep(40);
-    
+{ 
     // C 库函数
     printf("hello printf\n");
     fprintf(stdout, "hello fprint\n");

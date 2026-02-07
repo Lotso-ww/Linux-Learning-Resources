@@ -7,103 +7,51 @@
 
 int main()
 {
-    umask(0);
-    int fd = open("log.txt", O_CREAT | O_WRONLY | O_TRUNC, 0666);
-    if(fd < 0)
-    {
-        perror("open");
-        return 1;
-    }
-    //const char *message = "1234567890abcdefg\n";
-    const char *message = "ccc";
-    //write(fd, message, strlen(message));
+    // 当前路径可以切换
+   // chdir("/home/Lotso");
+   // char pwd[64];
+   // getcwd(pwd, sizeof(pwd));
+   // printf("cwd: %s\n", pwd);
+   
+    FILE* fp = fopen("log.txt", "w");
+   //FILE* fp = fopen("log.txt", "a");
+   // FILE* fp = fopen("log.txt", "r");
+   if(fp == NULL)
+   {
+       perror("fopen");
+       return 0;
+   }
 
-    close(fd);
-    return 0;
+   const char* message = "abcd\n";
+   fputs(message, fp);
+   int cnt = 0;
+   while(cnt < 10)
+   {
+      // fwrite(message, 1, strlen(message), fp); // 不用加1, 建议不算\0;
+      fputs(message, fp);
+      intf(fp, "hello bit: % d\n", cnt);
+      cnt++;
+   }
+   // 读取文件
+ //  char inbuffer[1024];
+ //  while(1)
+ //  {
+ //      // ftell 测试
+ //     // long pos = ftell(fp);
+ //     // printf("pos: %ld\n", pos);
+ //     //  int ch = fgetc(fp);
+ //     //  if(ch == EOF)
+ //     //  {
+ //     //     break;
+ //     //  }
+ //     //  printf("%c\n", ch);
+
+ //      if(!fgets(inbuffer, sizeof(inbuffer),fp))
+ //      {
+ //          break;
+ //      }
+ //      printf("file: %s", inbuffer);
+ //  }
+
+
 }
-
-//
-//#define ONE (1<<0)   // 1
-//#define TWO (1<<1)   // 1
-//#define THREE (1<<2) // 4
-//#define FOUR (1<<3)  // 8
-//#define FIVE (1<<4)  // 16
-//
-//void Print(int flags)
-//{
-//    if(flags & ONE)
-//        printf("ONE\n");
-//    if(flags & TWO)
-//        printf("TWO\n");
-//    if(flags & THREE)
-//        printf("THREE\n");
-//    if(flags & FOUR)
-//        printf("FOUR\n");
-//    if(flags & FIVE)
-//        printf("FIVE\n");
-//}
-//
-//int main()
-//{
-//    Print(ONE);
-//    printf("\n");
-//    Print(TWO);
-//    printf("\n");
-//    Print(ONE | TWO);
-//    printf("\n");
-//    Print(ONE | TWO | THREE);
-//    printf("\n");
-//    Print(ONE | TWO | THREE | FOUR);
-//    printf("\n");
-//    Print(TWO | THREE | FOUR | FIVE);
-//}
-//
-
-
-//int main()
-//{
-//    //chdir("/home/whb");
-//    //char pwd[64];
-//    //getcwd(pwd, sizeof(pwd));
-//    //printf("cwd: %s\n", pwd);
-//
-//
-//    FILE *fp = fopen("log.txt", "r");
-//    if(NULL == fp)
-//    {
-//        perror("fopen");
-//        return 0;
-//    }
-//
-//    char inbuffer[1024];
-//    while(1)
-//    {
-//        long pos = ftell(fp);
-//        printf("pos: %ld\n", pos);
-//        int ch = fgetc(fp);
-//        if(ch == EOF)
-//        {
-//            break;
-//        }
-//        printf("%c\n", ch);
-//        //if(!fgets(inbuffer, sizeof(inbuffer), fp))
-//        //{
-//        //    break;
-//        //}
-//        printf("file : %s", inbuffer);
-//    }
-//
-//    //const char *message = "abcd\n";
-//    //fputs(message, fp);
-//    ////int cnt = 0;
-//    //while(cnt < 10)
-//    //{
-//    //    //fwrite(message, 1, strlen(message)+1, fp);
-//    //    fputs(message, fp);
-//    //    //fprintf(fp, "hello bit: %d\n", cnt);
-//    //    cnt++;
-//    //}
-//
-//    fclose(fp);
-//    return 0;
-//}

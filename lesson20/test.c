@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h> 
 #include <unistd.h>
-
+#include <string.h>
 
 //// 正常退出，退出码 0
 //int main() 
@@ -25,26 +25,32 @@
 //}
 //
 
-// exit会冲刷缓存，输出"hello"
-void TestExit() 
-{
-    printf("hello");
-    exit(0);
-}
+//// exit会冲刷缓存，输出"hello"
+//void TestExit() 
+//{
+//    printf("hello");
+//    exit(0);
+//}
+//
+//// _exit不冲刷缓存，无输出
+//void Test_Exit() 
+//{
+//    printf("hello");
+//    _exit(0);
+//}
+//
+//
+//int main()
+//{
+//    //TestExit();
+//    Test_Exit();
+//    return 0;
+//}
+//
 
-// _exit不冲刷缓存，无输出
-void Test_Exit() 
+int main() 
 {
-    printf("hello");
-    _exit(0);
-}
-
-
-int main()
-{
-    //TestExit();
-    Test_Exit();
+    int exit_code = 1;
+    printf("退出码%d：%s\n", exit_code, strerror(exit_code));
     return 0;
 }
-
-
