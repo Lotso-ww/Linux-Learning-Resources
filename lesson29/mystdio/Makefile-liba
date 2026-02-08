@@ -1,0 +1,27 @@
+target=libmyc.a
+src=$(wildcard *.c)
+obj=$(src:.c=.o)
+cc=gcc -c
+ar=ar -rc
+
+$(target):$(obj)
+	$(ar) $@ $^
+%.o:%.c
+	$(cc) $<
+
+.PHONY:output
+output:
+	@mkdir -p myc/lib 
+	@mkdir -p myc/include
+	@cp *.h myc/include
+	@cp *.a myc/lib 
+	@tar czf myc.tgz myc 
+
+.PHONY:clean
+clean:
+	rm -rf *.o $(target) myc myc.tgz 
+
+debug:
+	@echo $(target)
+	@echo $(src)
+	@echo $(obj)
