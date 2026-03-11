@@ -174,6 +174,9 @@ public:
             }
             else if(id == 0) // 子进程
             {
+                // 关闭父进程历史的wfd!
+                for(auto& channel : _channels)
+                    channel.Close();
                 close(pipefd[1]);
                 Work(pipefd[0]);
                 close(pipefd[0]);
@@ -201,28 +204,28 @@ public:
     // 有版本存在一些问题, 后续会说为什么
     void Stop()
     {
-        // version1 -- 可以成功
-        // 1. 关闭wfd
-        for(auto& channel: _channels)
-        {
-            channel.Close();
-            std::cout << channel.Name() << " close success!" << std::endl;
-        }
-        sleep(3);
-        // 2. 回收子进程
-        for(auto& channel: _channels)
-        {
-            channel.Wait();
-            std::cout << channel.Name() << " wait success!" << std::endl;
-        }
-
-        // // version2 -- 不能成功???
+        // // version1 -- 可以成功
+        // // 1. 关闭wfd
         // for(auto& channel: _channels)
         // {
         //     channel.Close();
-        //     channel.Wait();
-        //     std::cout << channel.Name() << " close and wait success!" << std::endl;
+        //     std::cout << channel.Name() << " close success!" << std::endl;
         // }
+        // sleep(3);
+        // // 2. 回收子进程
+        // for(auto& channel: _channels)
+        // {
+        //     channel.Wait();
+        //     std::cout << channel.Name() << " wait success!" << std::endl;
+        // }
+
+        // version2 -- 不能成功???
+        for(auto& channel: _channels)
+        {
+            channel.Close();
+            channel.Wait();
+            std::cout << channel.Name() << " close and wait success!" << std::endl;
+        }
 
         // version3 -- 可以成功
         // int end = _channels.size() - 1;
