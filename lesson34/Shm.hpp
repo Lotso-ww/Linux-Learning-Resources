@@ -11,10 +11,10 @@ const std::string proj_name = "/home";
 const int proj_id = 0x6666;
 const int g_size = 4096;
 
-static std::string ToHex(int data)
+static std::string ToHex(long long data)
 {
     char buf[16];
-    snprintf(buf, sizeof(buf), "0x%x", data);
+    snprintf(buf, sizeof(buf), "0x%llx", data);
     return buf;
 }
 
@@ -81,7 +81,14 @@ public:
     // 5. 共享内存映射挂载
     void *Attch()
     {
-        return shmat(_shmid, nullptr, 0);
+        _start = (char *)shmat(_shmid, nullptr, 0);
+        return _start;
+    }
+    // 6. 共享内存去关联
+    void Detach()
+    {
+        int n = shmdt(_start);
+        (void)n;
     }
     void Debug()
     {
@@ -93,5 +100,12 @@ private:
     int _shmid;
     int _size;
     key_t _key;
+    char *_start;
 };
+
+typedef struct data
+{
+    int count;
+    char buf[26 * 2];
+}buffer_t;
 #endif
