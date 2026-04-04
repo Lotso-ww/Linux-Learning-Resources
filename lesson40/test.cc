@@ -4,37 +4,37 @@
 #include <unistd.h>
 #include <pthread.h>
 
-int g_val = 100;
-int *p = nullptr;
+// int g_val = 100;
+// int *p = nullptr;
 
-void hello(const std::string &name) {
-    printf("haha, I am common function!, %s\n", name.c_str());
-    sleep(5);
-}
+// void hello(const std::string &name) {
+//     printf("haha, I am common function!, %s\n", name.c_str());
+//     sleep(5);
+// }
 
-// class Task
-// {
-// public:
-//     Task() = default;
-//     void operator()()
-//     {
+class Task
+{
+public:
+    Task() = default;
+    void operator()()
+    {
 
-//     }
-//     ~Task() = default;
-// private:
-// };
+    }
+    ~Task() = default;
+private:
+};
 
 void *threaddrun1(void *args)
 {
-    p = (int*)malloc(sizeof(int) * 10);
+    // p = (int*)malloc(sizeof(int) * 10);
     std::string threadname = static_cast<const char*>(args);
     while(true)
     {
-        //sleep(1);
-        // std::cout << threadname << std::endl;
-        printf("%s is running, g_val: %d, &g_val: %p\n", threadname.c_str(), g_val, &g_val);
         sleep(1);
-        hello(threadname);
+        std::cout << threadname << std::endl;
+        // printf("%s is running, g_val: %d, &g_val: %p\n", threadname.c_str(), g_val, &g_val);
+        // sleep(1);
+        // hello(threadname);
     }
 }
 
@@ -43,12 +43,12 @@ void* threaddrun2(void *args)
     std::string threadname = static_cast<const char*>(args);
     while(true)
     {
-        // sleep(1);
-        // std::cout << threadname << std::endl;
-        printf("%s is running, g_val: %d, &g_val: %p\n", threadname.c_str(), g_val, &g_val);
         sleep(1);
-        g_val++;
-        hello(threadname);
+        std::cout << threadname << std::endl;
+        // printf("%s is running, g_val: %d, &g_val: %p\n", threadname.c_str(), g_val, &g_val);
+        // sleep(1);
+        // g_val++;
+        // hello(threadname);
     }
 }
 
@@ -57,14 +57,14 @@ int main()
     pthread_t t1, t2;
     pthread_create(&t1, nullptr, threaddrun1, (void*)"thread-1");
     pthread_create(&t2, nullptr, threaddrun2, (void*)"thread-2");
-    pthread_join(t1, nullptr);
-    pthread_join(t2, nullptr);
-    // while(true)
-    // {
-    //     // printf("Main thread, thread1 id: %ld, thread2 id: %ld\n", t1, t2);
-    //     printf("Main thread, thread1 id: %p, thread2 id: %p\n", t1, t2);
-    //     sleep(1);
-    // }
+    // pthread_join(t1, nullptr);
+    // pthread_join(t2, nullptr);
+    while(true)
+    {
+        // printf("Main thread, thread1 id: %ld, thread2 id: %ld\n", t1, t2);
+        printf("Main thread, thread1 id: %p, thread2 id: %p\n", t1, t2);
+        sleep(1);
+    }
     return 0;
 }
 
@@ -150,14 +150,14 @@ int main()
 //         printf("创建 LWP %d, LWP ID: %d\n", thread_ids[i], pids[i]);
 //     }
 
-//     printf("\n所有LWP已创建，等待执行完成...\n");
+//     printf("\n所有LWP已创建, 等待执行完成...\n");
 //     printf("注意：由于共享内存，主进程需要等待一段时间\n\n");
 
 //     // 注意：因为使用了CLONE_THREAD，不能使用waitpid等待
 //     // 简单的做法是等待足够长时间让子线程完成
 //     sleep(8);
 
-//     printf("\n主进程等待结束，清理资源\n");
+//     printf("\n主进程等待结束, 清理资源\n");
 
 //     // 清理栈空间
 //     for (int i = 0; i < NUM_THREADS; i++)
