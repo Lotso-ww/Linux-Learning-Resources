@@ -5,8 +5,8 @@
 #include <string>
 
 int tickets = 1000;
-pthread_mutex_t glock;
-pthread_cond_t gcond;
+pthread_mutex_t glock = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t gcond = PTHREAD_COND_INITIALIZER;
 
 void grabTicket(const std::string& name) 
 {
