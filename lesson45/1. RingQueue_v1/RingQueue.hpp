@@ -57,4 +57,7 @@ private:
     sem_t _data_sem;
     sem_t _space_sem;
 
+    // 两个锁 -- 单生产单消费者模型用不上
+    // pthread_mutex_t _p_mutex;
+    // pthread_mutex_t _c_mutex;
 };
