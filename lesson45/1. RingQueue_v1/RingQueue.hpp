@@ -17,7 +17,7 @@ public:
         sem_init(&_data_sem, 0, 0);
         sem_init(&_space_sem, 0, cap); // 初始空间信号量是cap
     }
-    void EnQueue(T &in)
+    void EnQueue(const T &in)
     {
         // 生产者
         sem_wait(&_space_sem); // 空间P()  --;
