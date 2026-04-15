@@ -57,7 +57,4 @@ private:
     sem_t _data_sem;
     sem_t _space_sem;
 
-    // 两个锁
-    pthread_mutex_t _p_mutex;
-    pthread_mutex_t _c_mutex;
 };
