@@ -50,7 +50,7 @@ int main()
     return 0;
 } 
 
-// int 类型 -- 测试下两个场景
+// // int 类型 -- 测试下两个场景
 // int main()
 // {
 //     // 1. 使用RingQueue -- 智能指针
@@ -60,6 +60,7 @@ int main()
 //     Thread c([&ringqueue]{
 //         while(true)
 //         {
+//             sleep(1);
 //             int data = 0;
 //             ringqueue->Pop(&data);
 //             std::cout << "消费了数据: " << data << std::endl;
@@ -69,7 +70,7 @@ int main()
 //         int data = 0;
 //         while(true)
 //         {
-//             sleep(1);
+//             // sleep(1);
 //             ringqueue->EnQueue(data);
 //             std::cout << "生产了数据: " << data << std::endl;
 //             data++;
