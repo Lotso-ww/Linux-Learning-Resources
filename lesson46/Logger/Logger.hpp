@@ -14,7 +14,7 @@
 
 
 
-namespace LogMoudle
+namespace LogModule
 {
     // 1. 获取时间
     std::string GetTimeStamp()
