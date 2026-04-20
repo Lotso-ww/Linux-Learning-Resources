@@ -13,6 +13,18 @@
 using namespace LogModule;
 
 const static int gDefaultCnt = 5;
+// #if 0
+// void DefaultRun()
+// {
+//     char name[64];
+//     pthread_getname_np(pthread_self(), name, sizeof(name));
+//     while(true)
+//     {
+//         LOG(LogLevel::DEBUG) << name << "线程执行默认方法";
+//         sleep(1);
+//     }
+// }
+// #endif
 
 template<typename T>
 class ThreadPool 
