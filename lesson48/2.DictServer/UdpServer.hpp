@@ -1,5 +1,5 @@
-#ifndef __UDP__ECHOSERVER__HPP
-#define __UDP__ECHOSERVER__HPP
+#ifndef __UDP__SERVER__HPP
+#define __UDP__SERVER__HPP
 
 #include <cstdint>
 #include <string>
@@ -88,7 +88,14 @@ public:
         }
     }
 
-    ~UdpServer(){}
+    ~UdpServer() 
+    {
+      if (_socketfd >= 0) 
+      {
+        close(_socketfd);
+        LOG(LogLevel::INFO) << "socket closed, sockfd: " << _socketfd;
+      }
+    }
 private:
     int _socketfd;
     // std::string _ip; // 可以不需要
