@@ -82,7 +82,15 @@ public:
         }
     }
 
-    ~UdpEchoServer(){}
+    ~UdpEchoServer() 
+    {
+      if (_socketfd >= 0) 
+      {
+        close(_socketfd);
+        LOG(LogLevel::INFO) << "socket closed, sockfd: " << _socketfd;
+      }
+    }
+
 private:
     int _socketfd;
     // std::string _ip; // 可以不需要

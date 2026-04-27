@@ -16,16 +16,7 @@ int main(int argc, char *argv[])
     }
 
     // std::string server_ip = argv[1];
-    uint16_t server_port;
-    try
-    {
-        server_port = std::stoi(argv[1]);
-    }
-    catch(const std::exception &e)
-    {
-        std::cerr << "invalid port number: " << e.what() << std::endl;
-        exit(1);
-    }
+    uint16_t server_port = std::stoi(argv[1]);
 
     // 初始化和启动
     UdpEchoServer usvr(server_port);
