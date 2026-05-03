@@ -11,6 +11,12 @@
 
 using func_t = std::function<void()>;
 
+enum  class TSTAYUS
+{
+    THREAD_NEW,
+    THREAD_RUNNING,
+    THREAD_STOPPED,
+};
 // 这个是有点bug的
 static int gunm = 1;
 
@@ -30,28 +36,44 @@ private:
         Thread* ts = static_cast<Thread*>(args);
         ts->get_pid();
         ts->get_lwid();
+        pthread_setname_np(pthread_self(), ts->Name().c_str());
         ts->_func();
         return nullptr;
     }
 public:
-    Thread(func_t f) : _func(f), _joinable(true)
+    Thread(func_t f) : _func(f), _joinable(true), _status(TSTAYUS::THREAD_NEW)
     {
         _name = "thread-" + std::to_string(gunm++);
     }
     void start()
     {
+        if(_status == TSTAYUS::THREAD_RUNNING)
+        {
+            std::cerr << "thread is already running" << std::endl;
+            return;
+        }
         int n = pthread_create(&_tid, nullptr, routine, this);
         if(n != 0)
         {
             std::cerr << "pthread_create failed" << std::endl;
         }
+        _status = TSTAYUS::THREAD_RUNNING;
     }
     void stop()
     {
-        int n = pthread_cancel(_tid);
-        if(n != 0)
+        if(_status == TSTAYUS::THREAD_RUNNING)
         {
-            std::cerr << "pthread_cancel failed" << std::endl;
+            int n = pthread_cancel(_tid);
+            if(n != 0)
+            {
+                std::cerr << "pthread_cancel failed" << std::endl;
+            }
+            _status = TSTAYUS::THREAD_STOPPED;
+        }
+        else 
+        {
+            std::cerr << "thread status is : THREAD_STOPPED or THREAD_NEW" << std::endl;
+            return;
         }
     }
     void join()
@@ -65,10 +87,13 @@ public:
             }
             printf("lwp: %d, name: %s, join success\n", _lwid, _name.c_str());
         }
+        else {
+            printf("lwp: %d, name: %s, join failed, because thread is detached\n", _lwid, _name.c_str());
+        }
     }
     void detach()
     {
-        if(_joinable)
+        if(_joinable && _status == TSTAYUS::THREAD_RUNNING)
         {
             _joinable = false;
             int n = pthread_detach(_tid);
@@ -78,6 +103,10 @@ public:
             }
         }
     }
+    std::string Name()
+    {
+        return _name;
+    }
     ~Thread()
     {}
 private:
@@ -85,8 +114,9 @@ private:
     pid_t _pid;
     pid_t _lwid;
     std::string _name;
-    bool _joinable;
     func_t _func;
+    bool _joinable;
+    TSTAYUS _status;
 };
 
 #endif

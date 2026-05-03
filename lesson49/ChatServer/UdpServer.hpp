@@ -15,7 +15,6 @@
 using namespace LogModule;
 
 // 参数就是获得的数据，返回值就是处理完数据的结果
-// using callback_t = std::function<std::string(const std::string &)>;
 using callback_t = std::function<void (std::string message, InetAddr who, int sockfd)>;
 
 class UdpServer{

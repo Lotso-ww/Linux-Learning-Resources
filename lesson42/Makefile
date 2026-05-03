@@ -1,5 +1,16 @@
-createThread:testThread.cpp
-	g++ -o $@ $^ -std=c++11 -lpthread
-.PHONY:clean
+CXX = g++
+CXXFLAGS = -std=c++11 -Wall -g
+TARGET = testThread
+SRCS = Main.cc
+OBJS = $(SRCS:.cc=.o)
+
+$(TARGET): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $^
+
+%.o: %.cc Thread.hpp
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
 clean:
-	rm -f createThread
+	rm -f $(OBJS) $(TARGET)
+
+.PHONY: clean

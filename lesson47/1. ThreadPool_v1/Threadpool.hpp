@@ -13,18 +13,6 @@
 using namespace LogModule;
 
 const static int gDefaultCnt = 5;
-// #if 0
-// void DefaultRun()
-// {
-//     char name[64];
-//     pthread_getname_np(pthread_self(), name, sizeof(name));
-//     while(true)
-//     {
-//         LOG(LogLevel::DEBUG) << name << "线程执行默认方法";
-//         sleep(1);
-//     }
-// }
-// #endif
 
 template<typename T>
 class ThreadPool 
@@ -62,7 +50,7 @@ private:
                 // 2. 任务队列为空 && 线程不处于运行状态(要退出) -- 允许退出
                 if(IsEmptyQueue() && !_isrunning)
                 {
-                    LOG(LogLevel::INFO) << "Thread: " << name << "quit";
+                    LOG(LogLevel::INFO) << "Thread: " << name << " quit";
                     break;
                 }
                 // 3. 任务队列不为空 && 线程处于运行状态(不退出)   -- 要先处理完任务
@@ -141,6 +129,4 @@ private:
     Mutex _mutex;
     Cond _cond;
 };
-
-
 #endif
