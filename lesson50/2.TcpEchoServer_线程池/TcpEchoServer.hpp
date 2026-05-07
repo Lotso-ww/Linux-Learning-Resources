@@ -28,41 +28,37 @@ private:
     // sockfd: 既可以支持读，又可以支持写, TCP socket也是全双工的.
     void Service(int sockfd, InetAddr client)
     {
+        char name[128];
+        pthread_getname_np(pthread_self(), name, sizeof(name));
         // 长连接服务
-        while (true) 
-        {
-            char inbuffer[1024];
+        // 我们的线程池版本不适合长连接服务，这里改成短连接
+        // 短连接服务
+        // while (true) 
+        // {
+        char inbuffer[1024];
 
-            // 1. 读取
-            int n = read(sockfd, inbuffer, sizeof(inbuffer) - 1);
-            if(n > 0)
-            {
-                inbuffer[n] = 0;
-                LOG(LogLevel::INFO) << client.StringAddress() << " say# " << inbuffer;
-            }
-            else if(n == 0)
-            {
-                LOG(LogLevel::INFO) << client.StringAddress() << " close sockfd: " << sockfd << ", me too!";
-                break;
-            }
-            else 
-            {
-                LOG(LogLevel::ERROR) << "read socket error";
-                break;
-            }
-
-            // 加工处理数据
-            std::string echo_string = "server echo# ";
-            echo_string += inbuffer;
-
-            // 2. 写回数据
-            int m = write(sockfd, echo_string.c_str(),  echo_string.size());
-            if(m < 0)
-            {
-                LOG(LogLevel::ERROR) << "write socket error";
-                break;
-            }
+        // 1. 读取
+        int n = read(sockfd, inbuffer, sizeof(inbuffer) - 1);
+        if (n > 0) {
+          inbuffer[n] = 0;
+          LOG(LogLevel::INFO) << name << " : " <<  client.StringAddress() << " say# " << inbuffer;
+        } else if (n == 0) {
+          LOG(LogLevel::INFO) << client.StringAddress()
+                              << " close sockfd: " << sockfd << ", me too!";
+        } else {
+          LOG(LogLevel::ERROR) << "read socket error";
         }
+
+        // 加工处理数据
+        std::string echo_string = "server echo# ";
+        echo_string += inbuffer;
+
+        // 2. 写回数据
+        int m = write(sockfd, echo_string.c_str(), echo_string.size());
+        if (m < 0) {
+          LOG(LogLevel::ERROR) << "write socket error";
+        }
+        // }
 
         close(sockfd);
     }
