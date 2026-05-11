@@ -118,6 +118,7 @@ using callback_t = std::function<Response(const Request&)>;
 class Protocol
 {
 public:
+    Protocol(){}
     Protocol(callback_t cb): _cb(cb)
     {}
     ~Protocol(){}
