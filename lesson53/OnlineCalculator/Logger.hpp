@@ -102,8 +102,8 @@ namespace LogModule
         Mutex _mutex;
     };
 
-    const static std::string gdefaultlogdir = "./log/";
-    const static std::string gdefaultlogfilename = "log.txt";
+    const static std::string gdefaultlogdir = "/var/log/";
+    const static std::string gdefaultlogfilename = "OnlineCalLog.txt";
 
     // 策略2：文件类日志策略
     // 子类

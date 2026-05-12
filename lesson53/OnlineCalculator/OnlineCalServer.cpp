@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <iostream>
 #include <memory>
+#include <unistd.h>
 #include "Calculator.hpp"
 #include "Daemon.hpp"
 #include "TcpServer.hpp"
@@ -20,11 +21,13 @@ int main(int argc, char *argv[])
     }
 
     uint16_t port = std::stoi(argv[1]);
-    ENABLE_CONSOLE_LOG_STRATEGY();
+    // ENABLE_CONSOLE_LOG_STRATEGY();
 
     // 守护进程这里还没测试
-    // ENABLE_FILE_LOG_STRATEGY();
-    // Daemon();
+    ENABLE_FILE_LOG_STRATEGY();
+    Daemon(0, 0);
+    // daemon(0, 0);
+    
 
     // 业务层 -> OSI 会话层 -> TCP/IP 应用层
     std::unique_ptr<Calculator> cal = std::make_unique<Calculator>();

@@ -8,8 +8,12 @@
 #include <fcntl.h>
 
 // 将进程变成守护进程的函数
-void Daemon()
+void Daemon(int nochagepath, int noredirect)
 {
+    // 0. 改变路径
+    if(!nochagepath)
+        chdir("/");
+
     // 1. 忽略相关信号
     signal(SIGCHLD, SIG_IGN);
     signal(SIGPIPE, SIG_IGN);
@@ -26,12 +30,16 @@ void Daemon()
     setsid();
 
     // 4. 处理输入输出
-    int fd = open("/dev/null", O_RDONLY);
-    if(fd >= 0)
+    if (!noredirect) 
     {
+      int fd = open("/dev/null", O_RDONLY);
+      if (fd >= 0) 
+      {
         dup2(fd, 0);
         dup2(fd, 1);
         dup2(fd, 2);
+      }
+      close(fd);
     }
 }
 #endif
