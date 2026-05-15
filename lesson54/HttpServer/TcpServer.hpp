@@ -58,36 +58,33 @@ public:
 
     void HandlerIo(std::shared_ptr<Socket> sockfd, InetAddr clientaddress)
     {
-        // 设计的是长服务
-        std::string inbuffer;
-        while(true)
-        {
-            // 读取数据
-            int n = sockfd->Recv(&inbuffer); // 底层是 +=, 这个很重要, 这样不完整就只会继续往之前的里面加
-            if(n == 0)
-            {
-                // 对端关闭,打印消息提示
-                LOG(LogLevel::INFO) << "client quit: " << clientaddress.StringAddress() << " sockfd: " << sockfd->Socketfd();
-                break;
-            }
-            else if(n < 0)
-            {
-                // 读取出异常, 打印消息提示并且退出
-                LOG(LogLevel::WARNING) << "recv error";
-                break;
-            }
+      // 设计的是长服务 -- 改成短连接
+      std::string inbuffer;
+      // 读取数据
+      int n = sockfd->Recv(&inbuffer); // 底层是 +=, 这个很重要,
+                                       // 这样不完整就只会继续往之前的里面加
+      if (n == 0) 
+      {
+        // 对端关闭,打印消息提示
+        LOG(LogLevel::INFO) << "client quit: " << clientaddress.StringAddress()
+                            << " sockfd: " << sockfd->Socketfd();
+      } 
+      else if (n < 0) 
+      {
+        // 读取出异常, 打印消息提示并且退出
+        LOG(LogLevel::WARNING) << "recv error";
+      }
 
-            // 在发送数据之前我们不能啥都不管就直接发了, 得保证报文的完整性
-            // 1. 分析inbuffer保证报文的完整性
-            // 2. a. 完整: 提取，处理 b.不完整：什么都不做
-            // 3：这个工作谁做？谁不做？ 协议来做！TcpServer自己不做
-            std::string outbuffer;
-            if(_handlerstream)
-                outbuffer = _handlerstream(inbuffer); // 回调函数会调出去，也会再回来！
-            // 发送数据 -- 如果不为空就发送
-            if(!outbuffer.empty())
-                sockfd->Send(outbuffer); // 其实也是有返回值的
-        }
+      // 在发送数据之前我们不能啥都不管就直接发了, 得保证报文的完整性
+      // 1. 分析inbuffer保证报文的完整性
+      // 2. a. 完整: 提取，处理 b.不完整：什么都不做
+      // 3：这个工作谁做？谁不做？ 协议来做！TcpServer自己不做
+      std::string outbuffer;
+      if (_handlerstream)
+        outbuffer = _handlerstream(inbuffer); // 回调函数会调出去，也会再回来！
+      // 发送数据 -- 如果不为空就发送
+      if (!outbuffer.empty())
+        sockfd->Send(outbuffer); // 其实也是有返回值的
     }
 private:
     int _port;
