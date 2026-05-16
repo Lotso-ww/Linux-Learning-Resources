@@ -1,5 +1,5 @@
-#ifndef __TCP__ECHOSERVER__HPP
-#define __TCP__ECHOSERVER__HPP
+#ifndef __TCP__SERVER__HPP
+#define __TCP__SERVER__HPP
 
 #include <csignal>
 #include <cstdint>
