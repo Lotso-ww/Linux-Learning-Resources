@@ -206,7 +206,7 @@ public:
 
     void Serialize(std::string *outstr)
     {
-        std::string status_line = _http_version + gspace + _status_code + gspace + _status_code_desc + linesep;
+        std::string status_line = _http_version + gspace + std::to_string(_status_code) + gspace + _status_code_desc + linesep;
         std::string response_header;
         for(auto& it: _response_headerkv)
         {
@@ -382,7 +382,7 @@ private:
     }
 private:
     std::string _http_version;
-    std::string _status_code;
+    int _status_code;
     std::string _status_code_desc;
     std::unordered_map<std::string,std::string> _response_headerkv;
     std::string _blankline;
