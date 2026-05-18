@@ -33,15 +33,23 @@ public:
         std::cout << "path: " << httpreq["path"]<< std::endl;
         std::cout << "args: " << httpreq["args"]<< std::endl;
 
-        // 3. httpreq -> httpresp
+               // 3. httpreq -> httpresp
         HttpResponse httpresp;
         // 我们想测试重定向的话 -- 下面我们404页面的方法2其实也测试到了
         // httpresp.SetCode(302);
         // httpresp.SetHeader("Location", "https://www.qq.com/");
-        std::string filecontent = GetFileContentHelper(httpreq["path"]);
-        std::string suffix = httpreq["suffix"];
-        if(filecontent.empty())
+        
+        // 处理动态资源
+        if (IsNeedRoute(httpreq["path"])) 
         {
+            _route[httpreq["path"]](httpreq, httpresp);
+        } 
+        else 
+        {
+          // 处理静态资源
+          std::string filecontent = GetFileContentHelper(httpreq["path"]);
+          std::string suffix = httpreq["suffix"];
+          if (filecontent.empty()) {
             // 如果为空, 我们加上404页面
             // 方法一
             // std::string page404 = "wwwroot/404.html";
@@ -53,15 +61,17 @@ public:
             // httpresp.SetBody(file404);
 
             // 方法二: 重定向
-            httpresp.SetCode(302); // 试试 301 也可以
+            httpresp.SetCode(301); // 试试 301 也可以
             httpresp.SetHeader("Location", "/404.html");
-        }
-        else
-        {
+          } 
+          else 
+          {
             httpresp.SetCode(200);
             httpresp.SetHeader("Content-Length", filecontent.size());
             httpresp.SetHeader("Content-Type", Suffix2Type(suffix));
+            httpresp.SetHeader("Connection", "close"); // 应答告诉浏览器我是短链接
             httpresp.SetBody(filecontent);
+          }
         }
 
         // 4. 应答进行序列化
@@ -87,6 +97,10 @@ public:
     ~HttpServer()
     {}
 private:
+    bool IsNeedRoute(const std::string &key)
+    {
+        return _route.find(key) != _route.end();
+    }
     std::string GetFileContentHelper(const std::string &fileurl)
     {
         std::ifstream in(fileurl);
