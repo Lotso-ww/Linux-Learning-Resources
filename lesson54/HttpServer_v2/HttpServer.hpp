@@ -50,19 +50,15 @@ public:
           std::string filecontent = GetFileContentHelper(httpreq["path"]);
           std::string suffix = httpreq["suffix"];
           if (filecontent.empty()) {
-            // 如果为空, 我们加上404页面
-            // 方法一
-            // std::string page404 = "wwwroot/404.html";
-            // httpresp.SetCode(404);
-            // std::string file404 = GetFileContentHelper(page404);
-            // suffix = ".html";
-            // httpresp.SetHeader("Content-Length", file404.size());
-            // httpresp.SetHeader("Content-Type", Suffix2Type(suffix));
-            // httpresp.SetBody(file404);
-
-            // 方法二: 重定向
-            httpresp.SetCode(301); // 试试 301 也可以
-            httpresp.SetHeader("Location", "/404.html");
+            // 如果为空, 返回404页面
+            std::string page404 = "wwwroot/404.html";
+            httpresp.SetCode(404);
+            std::string file404 = GetFileContentHelper(page404);
+            suffix = ".html";
+            httpresp.SetHeader("Content-Length", file404.size());
+            httpresp.SetHeader("Content-Type", Suffix2Type(suffix));
+            httpresp.SetHeader("Connection", "close");
+            httpresp.SetBody(file404);
           } 
           else 
           {
