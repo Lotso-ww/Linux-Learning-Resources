@@ -1,105 +1,108 @@
-#ifndef __HTTPSERVER__HPP
-#define __HTTPSERVER__HPP
+#pragma once
 
-#include <cstdint>
-#include <fstream>
 #include <iostream>
+#include <string>
 #include <memory>
+#include <fstream>
+#include <functional>
+#include <unordered_map>
+#include "HttpProtocol.hpp"
 #include "TcpServer.hpp"
 #include "Logger.hpp"
-#include "HttpProtocol.hpp"
 
 using namespace LogModule;
 
+using route_t = std::function<void(const HttpRequest &req, HttpResponse &resp)>;
 
 class HttpServer
 {
 public:
     HttpServer(uint16_t port)
-        : _port(port)
-        , _tsvr(std::make_unique<TcpServer>(port))
-    {}
-
+        : _port(port),
+          _tsvr(std::make_unique<TcpServer>(port))
+    {
+    }
+    // 1. 分析收到的字节流是否有完整的HTTP报文
+    // 2. http request -> http response
     std::string HandlerHttpRequest(std::string &streamstr)
     {
-        // 1. 检查报文完整性 -- 我们今天默认报文是完整的, 这里就不处理了
-        // 2. 对收到的请求进行反序列化
+        std::cout << "HandlerHttpRequest: \r\n"
+                  << streamstr << std::endl;
+
+        // 1. 报文完整性 - 略
+        // 2. 反序列化
         HttpRequest httpreq;
         httpreq.Deserialize(streamstr);
-
-        std::cout << "method: " << httpreq["method"]<< std::endl;
-        std::cout << "path: " << httpreq["path"]<< std::endl;
-        std::cout << "args: " << httpreq["args"]<< std::endl;
-
-        // 3. httpreq -> httpresp
         HttpResponse httpresp;
-        // 我们想测试重定向的话 -- 下面我们404页面的方法2其实也测试到了
-        // httpresp.SetCode(302);
-        // httpresp.SetHeader("Location", "https://www.qq.com/");
-        std::string filecontent = GetFileContentHelper(httpreq["path"]);
-        std::string suffix = httpreq["suffix"];
-        if(filecontent.empty())
-        {
-            // 如果为空, 我们加上404页面
-            // 方法一
-            // std::string page404 = "wwwroot/404.html";
-            // httpresp.SetCode(404);
-            // std::string file404 = GetFileContentHelper(page404);
-            // suffix = ".html";
-            // httpresp.SetHeader("Content-Length", file404.size());
-            // httpresp.SetHeader("Content-Type", Suffix2Type(suffix));
-            // httpresp.SetBody(file404);
 
-            // 方法二: 重定向
-            httpresp.SetCode(302); // 试试 301 也可以
-            httpresp.SetHeader("Location", "/404.html");
+        if (IsNeedRoute(httpreq["path"])) // POST: /login GET: /login   ?username=xx&passwd=yy
+        {
+            // 处理动态资源
+            _route[httpreq["path"]](httpreq, httpresp);
         }
         else
         {
-            httpresp.SetCode(200);
-            httpresp.SetHeader("Content-Length", filecontent.size());
-            httpresp.SetHeader("Content-Type", Suffix2Type(suffix));
-            httpresp.SetBody(filecontent);
+            // 3. 处理静态资源请求，构建应答httpreq->httpresp
+            std::string filecontent = GetFileContentHelper(httpreq["path"]);
+
+            std::string suffix = httpreq["suffix"];
+            if (filecontent.empty())
+            {
+                httpresp.SetCode(301);
+                httpresp.SetHeader("Location", "/404.html");
+            }
+            else
+            {
+                httpresp.SetCode(200);
+                httpresp.SetHeader("Content-Length", filecontent.size());
+                httpresp.SetHeader("Content-Type", Suffix2Type(suffix));
+                httpresp.SetHeader("Connection", "close");
+                httpresp.SetBody(filecontent);
+            }
         }
-        // 4. 应答进行序列化
+
+        // 4. 应答序列化
         std::string httprespstr;
-        httpresp.Serialize(&httprespstr); // 带出来
+        httpresp.Serialize(&httprespstr);
 
         // 5. 返回
         return httprespstr;
     }
-
     void Run()
     {
-        _tsvr->Run([this](std::string &streamstr){
-            return this->HandlerHttpRequest(streamstr);
-        });
+        _tsvr->Run([this](std::string &streamstr) -> std::string
+                   { return this->HandlerHttpRequest(streamstr); });
     }
-
-    ~HttpServer()
-    {}
-private:
-    std::string GetFileContentHelper(const std::string &fileurl)
+    void Register(std::string uri, route_t handler)
     {
-        std::ifstream in(fileurl);
-        if(!in.is_open())
+        std::string key = webroot + uri; // wwwroot/login
+        _route[key] = handler;
+    }
+    ~HttpServer() {}
+
+private:
+    bool IsNeedRoute(const std::string &key)
+    {
+        return _route.find(key) != _route.end();
+    }
+    std::string GetFileContentHelper(const std::string &filename)
+    {
+        std::ifstream in(filename);
+        if (!in.is_open())
         {
             return std::string();
         }
-        // 获取文件长度
         in.seekg(0, in.end);
         int filesize = in.tellg();
         in.seekg(0, in.beg);
 
-        // 把文件内容全部读进Content
         std::string content;
         content.resize(filesize);
-        in.read(content.data(), filesize);  // 用data,cpp17
+        in.read((char *)content.c_str(), filesize);
         in.close();
 
         return content;
     }
-
     // suffix: .html
     // return: text/html
     std::string Suffix2Type(const std::string &suffix)
@@ -178,8 +181,7 @@ private:
             {".manifest", "text/cache-manifest"},
             {".map", "application/json"}, // source maps
             {".ts", "video/mp2t"},        // MPEG transport stream
-            {".m3u8", "application/vnd.apple.mpegurl"}
-        };
+            {".m3u8", "application/vnd.apple.mpegurl"}};
 
         auto it = mime_map.find(suffix);
         if (it != mime_map.end())
@@ -190,8 +192,9 @@ private:
         // 默认返回二进制流，或根据需求返回其他默认值
         return "application/octet-stream";
     }
+
 private:
     uint16_t _port;
     std::unique_ptr<TcpServer> _tsvr;
+    std::unordered_map<std::string, route_t> _route; // 注册服务的容器
 };
-#endif

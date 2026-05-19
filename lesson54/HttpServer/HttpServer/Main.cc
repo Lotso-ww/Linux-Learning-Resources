@@ -1,22 +1,18 @@
 #include "HttpServer.hpp"
-#include <memory>
-
 
 void Usage(std::string procname)
 {
     std::cout << "Usage: " << procname << " ServerPort" << std::endl;
 }
+
 void Login(const HttpRequest &req, HttpResponse &resp)
 {
     std::string args = req["args"];
-    std::cout << "Login service: haha: " << args  << std::endl;
+    std::cout << "-----> Login service, args: " << args << std::endl;
 
-    std::string body = "Login success!\n";
     resp.SetCode(200);
-    resp.SetHeader("Content-Type", "text/plain");
-    resp.SetHeader("Content-Length", body.size());
-    resp.SetHeader("Connection", "close");
-    resp.SetBody(body);
+    resp.SetHeader("Cotent-Type", "text/plain");
+    resp.SetBody("Login success!\n");
 }
 
 void Register(const HttpRequest &req, HttpResponse &resp)
@@ -38,6 +34,7 @@ void CallBigModel(const HttpRequest &req, HttpResponse &resp)
     std::string args = req["args"];
     std::cout << "-----> CallBigModel service, args: " << args << std::endl;
 }
+
 int main(int argc, char *argv[])
 {
     if (argc != 2)
@@ -49,7 +46,6 @@ int main(int argc, char *argv[])
     ENABLE_CONSOLE_LOG_STRATEGY();
     uint16_t port = std::stoi(argv[1]);
 
-    // 我们现在这里不用lambda了,在HttpServer中实现了
     std::unique_ptr<HttpServer> hsvr = std::make_unique<HttpServer>(port);
     hsvr->Register("/app/login", Login);
     hsvr->Register("/app/register", Register);
