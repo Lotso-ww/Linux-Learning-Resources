@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>草莓熊注册 🍓</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: sans-serif; background-color: #ffe4e1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+        .login-card { background-color: #fff; border-radius: 24px; padding: 40px; box-shadow: 0 10px 25px rgba(209,71,117,0.2); width: 90%; max-width: 400px; text-align: center; border: 4px solid #ffb6c1; }
+        .login-card h2 { margin-bottom: 25px; color: #d14775; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        .input-group {text-align: left; }
+        .input-group label { font-size: 14px; font-weight: bold; color: #d14775; display: block; margin-bottom: 5px; text-align: left;}
+        .input-group input { width: 100%; padding: 12px; border: 2px solid #ffc0cb; border-radius: 12px; outline: none; background-color: #fff0f3; }
+        .input-group input:focus { border-color: #d14775; background-color: #fff; }
+        input[type="submit"] { background-color: #d14775; color: white; border: none; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        input[type="submit"]:hover { background-color: #b0305a; }
+        .back-link { display: inline-block; margin-top: 20px; color: #d14775; text-decoration: none; font-size: 14px; font-weight: bold; }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div style="font-size: 45px; margin-bottom: 10px;">🎀🐻</div>
+        <h2>加入草莓熊</h2>
+        <form action="/app/register" method="post">
+            <div class="input-group">
+                <label>用户名：</label>
+                <input type="text" name="username" placeholder="起个可爱的名字" required>
+            </div>
+            <div class="input-group">
+                <label>密码：</label>
+                <input type="password" name="passwd" placeholder="设置密码" required>
+            </div>
+            <div class="input-group">
+                <label>确认密码：</label>
+                <input type="password" name="repasswd" placeholder="再次输入密码" required>
+            </div>
+            <input type="submit" value="注 册">
+        </form>
+        <a href="index.html" class="back-link">返回首页</a> | <a href="Login.html" class="back-link">去登录</a>
+    </div>
+</body>
+</html>
