@@ -118,9 +118,10 @@ private:
                 if(arr_fds[pos] == gdefaultfd)
                     break;
             }
-            if(pos == NUM)
+            if(pos >= NUM)
             {
                 // 遍历完了找不到
+                LOG(LogLevel::WARNING) << "server is full!";
                 close(fd);
             }
             else
