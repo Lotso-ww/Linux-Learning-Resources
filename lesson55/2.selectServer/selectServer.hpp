@@ -76,7 +76,6 @@ public:
                 close(arr_fds[i]);
         }
     }
-
 private:
     void EventHandler(fd_set &rfds)
     {
