@@ -39,6 +39,7 @@ public:
     {
         while(true)
         {
+            PrintFds();
             int timeout = 2000;
             // 不需要参数重置了
             int n = poll(_fdevent, NUM, timeout);
