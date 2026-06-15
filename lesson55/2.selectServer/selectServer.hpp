@@ -37,6 +37,7 @@ public:
         fd_set rfds; // read fd set
         while(true)
         {
+            PrintFds();
             // rfds 参数重置
             FD_ZERO(&rfds);
             int max_fd = gdefaultfd;
@@ -163,6 +164,16 @@ private:
             close(arr_fds[i]); // 关闭文件描述符
             arr_fds[i] = gdefaultfd; // 辅助数组里面也处理一下 
         }
+    }
+    void PrintFds()
+    {
+        std::cout << "Select Server list: ";
+        for(int i = 0; i < NUM; i++)
+        {
+            if(arr_fds[i] == gdefaultfd) continue;
+            std::cout << arr_fds[i] << " ";
+        }
+        std::cout << std::endl;
     }
 private:
     uint16_t _port;
