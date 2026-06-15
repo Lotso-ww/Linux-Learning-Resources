@@ -8,6 +8,8 @@
 #include <cstdint>
 #include <memory>
 #include <sys/select.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 #define NUM (sizeof(fd_set) * 8)
 using namespace LogModule;
@@ -29,7 +31,8 @@ public:
         // 首先把_litenfd 放入数组里面
         arr_fds[0] = _listenfd->Socketfd();
     }
-    void Start()
+    // 事件派发器
+    void Dispatcher()
     {
         fd_set rfds; // read fd set
         while(true)
@@ -58,15 +61,47 @@ public:
                 break;
             default:
                 LOG(LogLevel::DEBUG) << "事件就绪...: n: " << n;
-                HandlerEvent();
+                EventHandler(rfds);
                 break;
             }
         }
     }
     ~selectServer()
-    {}
+    {
+        // 不需要 arr_fds[i] = gdefaultfd
+        // 因为对象马上就销毁了，数组也没了
+        for(int i = 0; i < NUM; i++)
+        {
+            if(arr_fds[i] != gdefaultfd)
+                close(arr_fds[i]);
+        }
+    }
+
 private:
-    void HandlerEvent()
+    void EventHandler(fd_set &rfds)
+    {
+        for(int i = 0; i < NUM; i++)
+        {
+            if(arr_fds[i] == gdefaultfd) continue;
+            // 走到这里可以判断是合法的, 但是我们还需要判断是否就绪
+            if(FD_ISSET(arr_fds[i], &rfds))
+            {
+                // 走到这里就肯定是就绪了
+                // 再判断是普通的还是listen
+                if(arr_fds[i] == _listenfd->Socketfd())
+                {
+                    // listensockfd
+                    Acceptor();
+                }
+                else 
+                {
+                    // normal sockfd
+                    IOHandler(i);
+                }
+            }
+        }
+    }
+    void Acceptor()
     {
         InetAddr clientaddr;
         int fd = _listenfd->Accepter(&clientaddr);
@@ -94,6 +129,40 @@ private:
                 // 下一轮循环的时候, 会关心上的
                 arr_fds[pos] = fd;
             }
+        }
+        else 
+        {
+            LOG(LogLevel::ERROR) << "Accept error!"; 
+        }
+    }
+    void IOHandler(int i)
+    {
+        char inbuffer[1024];
+        // 在之前的逻辑中已经select等待过了, 走到这里直接读就行
+        ssize_t n = recv(arr_fds[i], inbuffer, sizeof(inbuffer) - 1, 0);
+        if(n > 0)
+        {
+            inbuffer[n] = 0;
+            std::cout << "client say@ " << inbuffer << std::endl;
+
+            // 需要写回去, 这里我们需要等待嘛
+            // 其实是先不需要的,写缓冲区默认有数据
+            std::string send_string = "echo# ";
+            send_string += inbuffer;
+            send(arr_fds[i], send_string.c_str(), send_string.size(), 0);
+        }
+        else if(n == 0)
+        {
+            // 对端关闭了连接
+            LOG(LogLevel::INFO) << "sockfd is close";
+            close(arr_fds[i]); // 关闭文件描述符
+            arr_fds[i] = gdefaultfd; // 辅助数组里面也处理一下 
+        }
+        else
+        {
+            LOG(LogLevel::ERROR) << "read error";
+            close(arr_fds[i]); // 关闭文件描述符
+            arr_fds[i] = gdefaultfd; // 辅助数组里面也处理一下 
         }
     }
 private:
