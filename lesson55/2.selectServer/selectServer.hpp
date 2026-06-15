@@ -168,7 +168,7 @@ private:
     }
     void PrintFds()
     {
-        std::cout << "Select Server list: ";
+        std::cout << "Select Server fds list: ";
         for(int i = 0; i < NUM; i++)
         {
             if(arr_fds[i] == gdefaultfd) continue;
