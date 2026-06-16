@@ -46,4 +46,30 @@ public:
 private:
     int _epfd;
 };
+
+// 下面这种形式也是可以的, 这样就可以分别实现select,poll,epoll版本的了
+// 帮我们监听所有的fd是否就绪！！
+// class Poller
+// {
+// public:
+//     virtual bool Create() = 0;
+//     virtual bool Destroy() = 0;
+//     virtual void GetEvents() = 0;
+//     virtual void SetFdEvent() = 0;
+// };
+
+// class SelectPoller : Poller
+// {
+
+// };
+
+// class PollPoller:Poller
+// {
+
+// };
+
+// class EpollPoller: Poller
+// {
+
+// };
 #endif
