@@ -61,24 +61,24 @@ public:
                     return;
                 }
             }
-            // 到了这里我们就需要进行一下判断报文完整性了(后续需要回复了), 这个工作不应该我们来做, 交给协议
-            // 我们就需要什么呢? 回调函数
-            int code = 0;
-            std::string result = _on_Message(_inbuffer, &code);
-            if(code == 0)
-            {
-                _outbuffer += result;
-            }
-            else  
-            {
-                Excepter();
-                return;
-            }
-
-            // version1 -- 不为空直接发送
-            if(!_outbuffer.empty())
-                Sender();
         }
+        // 到了这里我们就需要进行一下判断报文完整性了(后续需要回复了), 这个工作不应该我们来做, 交给协议
+        // 我们就需要什么呢? 回调函数
+        int code = 0;
+        std::string result = _on_Message(_inbuffer, &code);
+        if(code == 0)
+        {
+            _outbuffer += result;
+        }
+        else  
+        {
+            Excepter();
+            return;
+        }
+
+        // version1 -- 不为空直接发送
+        if(!_outbuffer.empty())
+                Sender();
     }
     void Sender() override
     {
