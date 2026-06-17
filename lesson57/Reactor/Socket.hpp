@@ -31,7 +31,7 @@ public:
     virtual void CreateSocketOrDie() = 0;
     virtual void BindSocketOrDie(uint16_t port) = 0;
     virtual void ListenSocketOrDie() = 0;
-    virtual int Accepter(InetAddr *clientaddress) = 0;
+    virtual int Accepter(InetAddr *clientaddress, int *code) = 0;
     virtual void ConnectSocketOrDie(const std::string &serverip, uint16_t serverport) = 0;
     virtual int Socketfd() = 0;
     virtual void Close() = 0;
@@ -75,6 +75,7 @@ public:
             LOG(LogLevel::FATAL) << "create socket error";
             exit(SOCKET_ERROR);
         }
+        SetNonBlcok(_sockfd); // 设置为非阻塞
         int opt = 1;
         // 1. 设置为地址复用
         setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
@@ -109,12 +110,13 @@ public:
     }
 
     // 返回值修改成 int
-    int Accepter(InetAddr *clientaddress) override
+    int Accepter(InetAddr *clientaddress, int *code) override
     {
         struct sockaddr_in peer;
         socklen_t len = sizeof(peer);
         // 从全连接队列中取出一个已经完成三次握手的连接
         int sockfd = accept(_sockfd, CONV(&peer), &len);
+        *code = errno;
         if(sockfd < 0)
         {
             return -1;

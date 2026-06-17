@@ -40,6 +40,10 @@ public:
         {
             LOG(LogLevel::FATAL) << "epoll_wait error";
         }
+        else if(n == 0)
+        {
+            LOG(LogLevel::INFO) << "epoll_wait time out";
+        }
         return n;
     }
     ~Poller(){}
