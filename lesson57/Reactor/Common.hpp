@@ -14,7 +14,7 @@ enum
     EPOLL_ERROR,
 };
 
-void SetNonBlcok(int fd)
+void SetNonBlock(int fd)
 {
     // 先获取已经有的标志位
     int flags = fcntl(fd, F_GETFL);

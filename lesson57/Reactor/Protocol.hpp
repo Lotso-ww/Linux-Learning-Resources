@@ -195,7 +195,8 @@ public:
             {
                 LOG(LogLevel::DEBUG) << "协议解析失败";
                 *code = -1;
-                exit(1); // 致命错误，服务端直接断开当前这个“不守规矩”的客户端
+                return std::string(); // 返回一个空串
+                // exit(1); // 致命错误，服务端直接断开当前这个“不守规矩”的客户端 -- 之前是因为是多进程多线程,所以我们可以这样
             }
             // 如果可以走到这里, 我就保证了至少是有一个完整报文的
             LOG(LogLevel::DEBUG) << "request : jsonstring: " << jsonstring;

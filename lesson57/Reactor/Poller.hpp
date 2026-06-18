@@ -24,14 +24,23 @@ public:
     }
     void AddEvents(int sockfd, uint32_t events)
     {
-        struct epoll_event evn;
-        evn.events = events;
-        evn.data.fd = sockfd;
-        int n = epoll_ctl(_epfd, EPOLL_CTL_ADD, sockfd, &evn);
+        int n = EpollCtlHelper(sockfd, events, EPOLL_CTL_ADD);
         if(n < 0)
         {
-            LOG(LogLevel::FATAL) << "epoll_ctl add error";
+            LOG(LogLevel::FATAL) << "AddEvents: epoll_ctl add error";
         }
+    }
+    void ModEvents(int sockfd, uint32_t events)
+    {
+        int n = EpollCtlHelper(sockfd, events, EPOLL_CTL_MOD);
+        if(n < 0)
+        {
+            LOG(LogLevel::FATAL) << "ModEvents: epoll_ctl mod error";
+        }
+    }
+    void DelEvents(int sockfd)
+    {
+        EpollCtlHelper(sockfd, 0, EPOLL_CTL_DEL);
     }
     int WaitEvents(struct epoll_event revs[], int maxevents, int timeout)
     {
@@ -47,6 +56,18 @@ public:
         return n;
     }
     ~Poller(){}
+private:
+    int EpollCtlHelper(int sockfd, uint32_t events, int oper)
+    {
+        if(oper == EPOLL_CTL_DEL)
+        {
+            return epoll_ctl(_epfd, oper, sockfd, nullptr);
+        }
+        struct epoll_event evn;
+        evn.events = events;
+        evn.data.fd = sockfd;
+        return epoll_ctl(_epfd, oper, sockfd, &evn);
+    }
 private:
     int _epfd;
 };

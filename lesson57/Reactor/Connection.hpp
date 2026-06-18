@@ -18,6 +18,7 @@ public:
     void SetEvents(uint32_t events) { _events = events; }
     void SetClientAddress(InetAddr& addr) { _clientaddr = addr; }
     virtual int Sockfd() = 0;
+    virtual void Close() = 0;
     virtual void Recver() = 0;
     virtual void Sender() = 0;
     virtual void Excepter() = 0;

@@ -75,7 +75,7 @@ public:
             LOG(LogLevel::FATAL) << "create socket error";
             exit(SOCKET_ERROR);
         }
-        SetNonBlcok(_sockfd); // 设置为非阻塞
+        SetNonBlock(_sockfd); // 设置为非阻塞
         int opt = 1;
         // 1. 设置为地址复用
         setsockopt(_sockfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));

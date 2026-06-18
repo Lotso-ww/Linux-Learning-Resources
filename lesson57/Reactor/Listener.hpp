@@ -26,6 +26,10 @@ public:
     {
         return _listensockfd->Socketfd();
     }
+    void Close() override
+    {
+        close(_listensockfd->Socketfd());
+    }
     void Recver() override
     {
         LOG(LogLevel::INFO) <<"Listener Event Readdy, sockfd is: " << _listensockfd->Socketfd();
@@ -37,9 +41,9 @@ public:
             if(sockfd >= 0)
             {
                 // 获取新连接成功了
-                LOG(LogLevel::INFO) << "accept success, " << "get a new sockfd: " << sockfd;
+                LOG(LogLevel::INFO) << "accept success, " << "get a new sockfd: " << sockfd << " client address: " << clientaddr.StringAddress();
                 // 1. 我们需要先把这个sockfd设置为非阻塞, 再进行构建, 包装成connection
-                SetNonBlcok(sockfd);
+                SetNonBlock(sockfd);
                 std::shared_ptr<Connection> conn = std::make_shared<IOHandler>(sockfd, _on_Message);
                 conn->SetEvents(EPOLLIN | EPOLLET);         // 设置关心的事件
                 conn->SetClientAddress(clientaddr);  // 设置对应的客户端地址

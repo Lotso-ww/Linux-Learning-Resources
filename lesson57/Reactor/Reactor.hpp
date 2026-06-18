@@ -32,11 +32,26 @@ public:
 
         LOG(LogLevel::INFO) << "insert " << conn->Sockfd() << " into Reactor";
     }
-    void EnableReadWrite(int sockfd, bool isRead, bool isWrite)
+    void EnableReadWrite(int sockfd, bool enableRead, bool enableWrite)
     {
          if(!IsConnectionExists(sockfd))
             return;
-        // TODO -- 待完善
+        uint32_t events = ((enableRead ? EPOLLIN : 0) | (enableWrite ? EPOLLOUT : 0) | EPOLLET);
+        _connections[sockfd]->SetEvents(events);
+        // 写透到内核中
+        _epoll->ModEvents(sockfd, events);
+    }
+    void DelConnection(int sockfd)
+    {
+        if(!IsConnectionExists(sockfd))
+            return;
+        LOG(LogLevel::INFO) << "delete sockfd: " << sockfd; 
+        // 1. 先从epoll中删除
+        _epoll->DelEvents(sockfd);
+        // 2. 关闭对应的文件fd
+        _connections[sockfd]->Close();
+        // 3. 再从连接管理里面给移除掉
+        _connections.erase(sockfd);
     }
     void LoopOnce(int timeout) 
     {

@@ -22,6 +22,10 @@ public:
     {
         return _sockfd;
     }
+    void Close() override
+    {
+        close(_sockfd);
+    }
     void Recver() override
     {
         LOG(LogLevel::INFO) <<"IOHandler Event Readdy, sockfd is: " << _sockfd;
@@ -79,6 +83,9 @@ public:
         // version1 -- 不为空直接发送
         if(!_outbuffer.empty())
                 Sender();
+        // // Version2 -- 也可以直接使能
+        // if(!_outbuffer.empty())
+        //     _R->EnableReadWrite(_sockfd, true, true);
     }
     void Sender() override
     {
@@ -115,7 +122,7 @@ public:
         // 走到这里, 两种情况
         // 1. 发送完了
         // 2. 还没发完, 写条件不满足, 这里就有说法了
-        if(!_outbuffer.empty())
+        if(_outbuffer.empty()) // 为空了
             _R->EnableReadWrite(_sockfd, true, false);
         else // 对conn，修改sockfd关心的事件，epoll ->EPOLLOUT
             _R->EnableReadWrite(_sockfd, true, true); // 写也可以设置为true了
@@ -124,6 +131,8 @@ public:
     void Excepter() override
     {
         LOG(LogLevel::ERROR) << "Excepter, address is: " << _clientaddr.StringAddress() << " sockfd: " << _sockfd;
+        // 实现异常处理其实很简单, 其实就是把这个文件描述符(连接)清除掉就行
+        _R->DelConnection(_sockfd);
     }
     ~IOHandler(){}
 private:
